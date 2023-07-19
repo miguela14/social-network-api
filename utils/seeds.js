@@ -37,13 +37,18 @@ const seedDatabase = async () => {
     // Create users
     const createdUsers = await User.create(userData);
 
-    // Create thoughts
-    const createdThoughts = await Thought.create(
-      thoughtData.map(thought => ({
-        ...thought,
-        userId: createdUsers[Math.floor(Math.random() * createdUsers.length)]._id
-      }))
-    );
+    const createdThoughts = await Thought.create([
+      {
+        thoughtText: 'Thought 1',
+        username: createdUsers[0].username,
+        userId: createdUsers[0]._id
+      },
+      {
+        thoughtText: 'Thought 2',
+        username: createdUsers[1].username,
+        userId: createdUsers[1]._id
+      }
+    ]);
 
     console.log('Seed data created successfully!');
     process.exit(0);

@@ -50,13 +50,20 @@ module.exports = {
     },
     //update a user _id
     updateUser(req, res) {
-        User.findOneAndUpdate({ _id: req.params.userId }, { $set: req.body })
+        User.findOneAndUpdate({ _id: req.params.userId }, { $set: req.body }, { new: true})
             .then(dbUser => {
                 if (!dbUser) {
                     res.status(404).json({ message: 'No user found with this id!' });
                     return;
                 }
-                res.json(dbUser);
+                return dbUser.save();
+            })
+            .then(savedUser => {
+              res.json(savedUser);
+            })
+            .catch(err => {
+              console.log(err);
+              res.status(400).json(err);
             });
     },
     // delete a user by _id
@@ -78,7 +85,7 @@ module.exports = {
             { _id: req.params.userId },
             { $push: { friends: req.params.friendId } },
             { new: true }
-        )
+        )  
             .then(dbUser => {
                 if (!dbUser) {
                     res.status(404).json({ message: 'No user found with this id!' });
